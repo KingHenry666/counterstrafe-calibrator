@@ -1,0 +1,135 @@
+
+<div id="app">
+  <div class="mobile-note" id="mobile-note" hidden>这个工具需要实体键盘和鼠标，请用电脑打开。</div>
+  <header class="topbar">
+    <div class="topbar-in">
+      <a class="brand" href="#home"><b>急停标定台</b><span>ROG 魔导士 ACE HFX · 无畏契约</span></a>
+      <span class="pill acc">第二版</span>
+      <nav class="nav" id="nav">
+        <a href="#home" data-view="home">场景</a>
+        <a href="#setup" data-view="setup">基线设置</a>
+        <a href="#results" data-view="results">结果</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== HOME ===== -->
+  <main class="wrap" id="view-home">
+    <h2>场景</h2>
+    <p class="lead" style="margin-top:8px">把你的手指习惯翻译成 Armoury Crate 里的数字。先在<strong>基线设置</strong>里把键盘参数归到最小值，按 01 → 04 的顺序做完，再去结果页看推荐值，最后用 05 验证。</p>
+    <div class="section">
+      <div class="section-head"><h3>测试场景</h3><span class="meta" id="home-check-meta"></span></div>
+      <div class="grid" id="scenario-grid"></div>
+    </div>
+    <div class="section">
+      <div class="section-head"><h3>急停反应 · 最近成绩</h3></div>
+      <div class="tablewrap" id="home-history"></div>
+    </div>
+  </main>
+
+  <!-- ===== SETUP ===== -->
+  <main class="wrap" id="view-setup" hidden>
+    <h2>基线设置</h2>
+    <p class="lead" style="margin-top:8px">测试前把 Armoury Crate 里 A/D 的参数全部归到最小值。这样键盘是最灵敏的传感器：手指一动就报事件，抖动和到底回弹也全部暴露出来，测到的才是你真实的手。</p>
+    <div class="two" style="margin-top:24px">
+      <div class="panel">
+        <h3>基线清单 <span class="pill" id="check-count">0 / 9</span></h3>
+        <div class="progress"><i id="check-bar"></i></div>
+        <div id="checklist"></div>
+        <p class="hint">建议先在 Armoury Crate 右上角新建一个名为"急停测试"的配置文件，测完再把推荐值抄回主配置。全部勾选后才能进入场景。</p>
+        <div><a class="btn primary" id="go-scene" href="#scenario-stop">进入场景 01：急停反应</a></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+        <div class="panel">
+          <h3>灵敏度</h3>
+          <div class="fields">
+            <div class="field"><label for="in-sens">无畏契约游戏内灵敏度</label><input id="in-sens" type="number" step="0.01" min="0.01" max="10"></div>
+            <div class="field"><label for="in-dpi">鼠标 DPI</label><input id="in-dpi" type="number" step="50" min="100" max="32000"></div>
+          </div>
+          <dl class="kv">
+            <dt>每计数转动</dt><dd id="kv-yaw">—</dd>
+            <dt>eDPI</dt><dd id="kv-edpi">—</dd>
+            <dt>cm / 360°</dt><dd id="kv-cm">—</dd>
+          </dl>
+          <p class="hint">场景按无畏契约的 0.07° × 灵敏度 每计数换算视角。指针锁定返回的是像素位移，Windows 缩放 100% 且关闭鼠标加速时约等于计数。</p>
+        </div>
+        <div class="panel selfcheck">
+          <h3>键盘自检</h3>
+          <div class="keypad" id="keypad">
+            <span class="key" data-code="KeyW">W</span><span class="key" data-code="KeyA">A</span><span class="key" data-code="KeyS">S</span><span class="key" data-code="KeyD">D</span><span class="key wide" data-code="Space">Space</span>
+          </div>
+          <div class="firepad" id="firepad">在这里按鼠标左键</div>
+          <div class="evlog" id="evlog">依次按 W / A / S / D / 空格，再在上面的区域按鼠标左键。</div>
+          <dl class="kv"><dt>时间戳粒度</dt><dd id="kv-gran">—</dd></dl>
+        </div>
+        <div class="panel">
+          <h3>少开软件的两个办法</h3>
+          <p class="hint">场景 03 要改四五次触发点，这两个办法比每次进 Armoury Crate 快得多。</p>
+          <dl class="kv">
+            <dt>触控条</dt><dd style="font-family:var(--font-body)">双击触控条进入单键模式，可调的键亮绿；按一下 A，在触控条上滑到目标值，再按 D 重复。红光（设了 DKS）的键改不了。</dd>
+            <dt>配置文件</dt><dd style="font-family:var(--font-body)">键盘能存 6 个配置文件（5 个自定义）。提前在配置文件 2–6 里把 A/D 触发点存成 0.5 / 1.0 / 1.5 / 2.0 / 2.5 mm，测试时只在 Armoury Crate 右上角切换。</dd>
+          </dl>
+          <p class="hint">网站写不进 Armoury Crate 或键盘：没有公开接口，协议也不公开，所有参数都要你自己改。</p>
+        </div>
+        <details class="adv">
+          <summary>高级设置（运动模型、试次数、声音）</summary>
+          <div class="fields">
+            <div class="field"><label for="in-tacc">加速时间 T_acc (ms)</label><input id="in-tacc" type="number" step="10" min="20" max="600"></div>
+            <div class="field"><label for="in-tdec">减速时间 T_dec (ms)</label><input id="in-tdec" type="number" step="10" min="20" max="600"></div>
+            <div class="field"><label for="in-trials">场景 01 试次数（含热身 5 次）</label><input id="in-trials" type="number" step="5" min="10" max="60"></div>
+            <div class="field"><label for="in-spread">最大散布 (°)</label><input id="in-spread" type="number" step="0.5" min="0" max="10"></div>
+            <div class="field"><label for="in-sound">提示音</label><select id="in-sound"><option value="1">开</option><option value="0">关</option></select></div>
+          </div>
+          <p class="hint" style="padding-bottom:12px">默认值是起点，不是 Riot 的官方数据。急停（按反方向键）时减速时间减半；开枪瞬间剩余速度高于 10% 判为移动中开枪。DKS 到底位置按 3.6 mm 计。</p>
+        </details>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== 3D SCENE (01 / 02 / 05) ===== -->
+  <div id="view-scene" hidden>
+    <div id="canvas-host"></div>
+    <div class="hud">
+      <div class="hud-tl"><div class="n" id="hud-count">0<small>/ 30</small></div><div class="tag" id="hud-phase">热身</div></div>
+      <div class="hud-msg" id="hud-msg"></div>
+      <div class="hud-sub" id="hud-sub"></div>
+      <div class="flash" id="hud-flash"></div>
+      <div class="readout" id="hud-readout"></div>
+      <div class="crosshair" id="crosshair"><i class="l"></i><i class="r"></i><i class="u"></i><i class="d"></i></div>
+      <div class="hitmark" id="hitmark"><i></i><i></i><i></i><i></i></div>
+      <div class="hud-ring" id="hud-ring" hidden><div class="ring"><svg viewBox="0 0 180 180"><circle class="bg" cx="90" cy="90" r="80"></circle><circle class="fg" id="hud-ring-fg" cx="90" cy="90" r="80"></circle></svg><div class="txt" id="hud-ring-txt">0<small>/ 5 次</small></div></div></div>
+      <div class="speed"><div class="bar"><i id="speed-fill"></i><em></em></div><div class="lbl"><span>速度 <b id="speed-val">0%</b></span><span>停稳线 10%</span></div></div>
+    </div>
+    <div class="hud-tr"><button class="btn sm" id="btn-fullscreen" type="button">全屏</button><button class="btn sm" id="btn-exit" type="button">退出场景</button></div>
+    <div class="overlay" id="ov-start"><div class="box" id="ov-start-box"></div></div>
+    <div class="overlay" id="ov-pause" hidden>
+      <div class="box">
+        <h2>已暂停</h2>
+        <p class="hint">鼠标锁定已解除或窗口失去焦点，当前这一发作废。点击继续会重做这一发。</p>
+        <div class="row"><button class="btn primary" id="btn-resume" type="button">继续</button><button class="btn ghost" id="btn-abandon" type="button">放弃本次测试</button></div>
+      </div>
+    </div>
+    <div class="overlay" id="ov-end" hidden><div class="box" id="ov-end-box"></div></div>
+    <div class="overlay" id="ov-error" hidden>
+      <div class="box"><h2>3D 场景没有加载出来</h2><p class="hint">Three.js 没有从 CDN 加载成功，请检查网络后刷新页面。</p><div class="row"><a class="btn" href="#home">返回</a></div></div>
+    </div>
+  </div>
+
+  <!-- ===== LAB (03 / 04) ===== -->
+  <div id="view-lab" hidden>
+    <div class="lab-top"><div><div class="ttl" id="lab-title">场景</div><div class="sub" id="lab-sub"></div></div><div class="sp"><span class="pill" id="lab-round"></span><a class="btn sm" href="#home">退出场景</a></div></div>
+    <div class="stage" id="stage"></div>
+  </div>
+
+  <!-- ===== RESULTS ===== -->
+  <main class="wrap" id="view-results" hidden>
+    <h2>结果</h2>
+    <div id="results-body" style="margin-top:16px"></div>
+  </main>
+
+  <footer><div class="in">
+    <div>本站是第三方工具，与华硕 (ASUS/ROG)、Riot Games 无关。只记录浏览器内的按键事件，不读取、不修改键盘设置；所有参数需要你自己在 Armoury Crate 里手动填写。</div>
+    <div>第二版：五个场景齐全，推荐规则按文档第 5 节实现；数值阈值是起点，不是 Riot 官方数据。</div>
+  </div></footer>
+  <div class="toast" id="toast"></div>
+</div>

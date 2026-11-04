@@ -1,0 +1,30 @@
+// Synthetic-input checks for the pure functions in src/a-core.js. Run: node tests/rules.test.js
+const fs = require('fs'), path = require('path');
+let src = fs.readFileSync(path.join(__dirname, '..', 'src', 'a-core.js'), 'utf8');
+src = src.replace("(function () {\n'use strict';", "").replace("var $ = function (s) { return document.querySelector(s); };", "var $=function(){return null;};").replace("var t = $('#toast');", "var t={classList:{add(){},remove(){}}};");
+const sandbox = { console, localStorage: { getItem: () => null, setItem() {} }, performance: { now: () => 0 }, setTimeout: (fn, ms) => ({ fn, ms }), clearTimeout() {}, document: { querySelector: () => null, querySelectorAll: () => [] } };
+require('vm').runInNewContext(src + '\nmodule.exports={stepV,replayTrial,stopMetrics,strafeMetrics,HoldTracker,sweepNext,sweepApply,sweepResult,buildRecs,validateCompare};', Object.assign(sandbox, { module: { exports: {} } }));
+const M = sandbox.module.exports;
+let fails = 0; const ok = (name, cond) => { console.log((cond ? 'PASS ' : 'FAIL ') + name); if (!cond) fails++; };
+const m = { tAcc: 120, tDec: 100, csFactor: 0.5, stopThreshold: 0.1 };
+const tr = { dir: 1, events: [{ t: 0, code: 'KeyD', type: 'down' }, { t: 1660, code: 'KeyD', type: 'up' }], tHoldStart: 0, t0: 1500, tRelease: 1660, tFire: 1800 };
+ok('release + 140 ms is stopped', M.replayTrial(tr, m).vAtFire === 0);
+ok('release + 40 ms is still moving', M.replayTrial(Object.assign({}, tr, { tFire: 1700 }), m).vAtFire > 0.5);
+const cs = { dir: 1, events: [{ t: 0, code: 'KeyD', type: 'down' }, { t: 1660, code: 'KeyD', type: 'up' }, { t: 1665, code: 'KeyA', type: 'down' }, { t: 1900, code: 'KeyA', type: 'up' }], tHoldStart: 0, t0: 1500, tRelease: 1660, tFire: 1920 };
+ok('long counter-strafe overshoots', M.replayTrial(cs, m).overshoot === true);
+const ev = [{ t: 0, code: 'KeyD', type: 'down' }, { t: 300, code: 'KeyA', type: 'down' }, { t: 320, code: 'KeyD', type: 'up' }, { t: 650, code: 'KeyA', type: 'up' }, { t: 700, code: 'KeyD', type: 'down' }, { t: 990, code: 'KeyD', type: 'up' }, { t: 1000, code: 'KeyA', type: 'down' }, { t: 1300, code: 'KeyA', type: 'up' }];
+const sm = M.strafeMetrics(ev, 0);
+ok('strafe: 3 switches, one overlap', sm.n === 3 && Math.abs(sm.overlapRate - 1 / 3) < 1e-9 && sm.overlapMedian === 20);
+let st = { mode: 'touch', lo: 0.1, hi: 3.9, rounds: [] }, v, n = 0;
+while ((v = M.sweepNext(st)) != null) { M.sweepApply(st, v, v <= 1.7); n++; }
+const res = M.sweepResult(st);
+ok('bisection brackets 1.7 mm within 5 rounds', n <= 5 && res.lo <= 1.7 && res.hi > 1.7 && res.hi - res.lo <= 0.3);
+const light = { stop: { metrics: { stopRate: 0.8, hitRate: 0.7, fireAfterRelease: 140, stopGap: 40, firedWhileHoldingRate: 0, overshootRate: 0, csUseRate: 0.3, csOverlapRate: 0 } }, sweep: { depth: { lo: 1.0, hi: 1.5 }, lift: 0.3, repress: null }, bounce: { bounceEvents: 0, restFalse: 0, holds: 10 } };
+const heavy = { stop: light.stop, sweep: { depth: { lo: 3.0, hi: 3.5 }, lift: 2.0, repress: 1.0 }, bounce: { bounceEvents: 7, restFalse: 0, holds: 10 } };
+const rl = M.buildRecs(light, 'balanced').values, rh = M.buildRecs(heavy, 'balanced').values;
+ok('light hand gets smaller release than heavy hand', rl.release < rh.release);
+ok('heavy hand gets larger bottom deadzone', rh.dzBot > rl.dzBot);
+ok('light hand cannot use DKS bottom layer', M.buildRecs(light, 'balanced').dks[0].ok === false);
+const cmp = M.validateCompare(light.stop.metrics, { rate: 0.4 }, { stopRate: 0.84, hitRate: 0.7, fireAfterRelease: 133 }, { rate: 0.2 });
+ok('validation passes when stop rate holds and bounce drops', cmp.pass === true);
+process.exit(fails ? 1 : 0);

@@ -1,0 +1,51 @@
+
+/* ---------- lab view (sweep / bounce) ---------- */
+#view-lab { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column; overflow: auto; }
+.lab-top { display: flex; align-items: center; gap: 14px; padding-block: 12px; padding-top: calc(12px + env(safe-area-inset-top, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); background: rgba(11,16,19,0.9); position: sticky; top: 0; z-index: 2; }
+.lab-top .ttl { font-family: var(--font-display); font-size: 18px; font-weight: 700; }
+.lab-top .sub { color: var(--fg-3); font-size: 13px; }
+.lab-top .sp { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.stage { width: 100%; max-width: 760px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 18px; flex: 1; }
+.stage h2 { font-size: 26px; }
+.stage .big { font-family: var(--font-display); font-size: 72px; font-weight: 700; line-height: 1; text-align: center; color: var(--accent); font-variant-numeric: tabular-nums; }
+.stage .big.red { color: var(--miss); }
+.stage .big.green { color: var(--hit); }
+.stage .center { text-align: center; }
+.stage .prompt { font-family: var(--font-display); font-size: 30px; font-weight: 600; text-align: center; min-height: 40px; }
+.stage .prompt.cue { color: var(--accent); font-size: 40px; }
+.instruct { display: flex; flex-direction: column; gap: 10px; }
+.instruct .target { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.instruct .target b { font-family: var(--font-display); font-size: 40px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.instruct .target span { color: var(--fg-2); }
+.instruct ol { margin: 0; padding-left: 20px; color: var(--fg-2); display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.instruct ol b { color: var(--fg); font-weight: 500; }
+.beats { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.beats i { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line-2); display: inline-block; transition: transform 0.08s, background 0.08s; }
+.beats i.now { border-color: var(--accent); transform: scale(1.25); }
+.beats i.ok { background: var(--hit); border-color: var(--hit); }
+.beats i.miss { background: var(--miss); border-color: var(--miss); }
+.beatrow { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.beatrow .lbl { font-family: var(--font-display); font-size: 13px; color: var(--fg-3); letter-spacing: 0.08em; }
+.ring { width: 180px; height: 180px; margin: 0 auto; position: relative; }
+.ring svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.ring .bg { fill: none; stroke: var(--line-2); stroke-width: 10; }
+.ring .fg { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 502; stroke-dashoffset: 502; }
+.ring .fg.done { stroke: var(--hit); }
+.ring .txt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ring .txt small { font-size: 12px; color: var(--fg-3); font-weight: 500; }
+.rounds { display: flex; gap: 8px; flex-wrap: wrap; }
+.rounds span { font-family: var(--font-mono); font-size: 12px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--line-2); color: var(--fg-2); }
+.rounds span.pass { border-color: rgba(90,211,138,0.6); color: var(--hit); }
+.rounds span.fail { border-color: rgba(255,107,107,0.6); color: var(--miss); }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 6px; overflow: hidden; }
+.seg button { background: transparent; border: 0; padding: 7px 14px; cursor: pointer; color: var(--fg-2); font-size: 14px; }
+.seg button.on { background: var(--accent); color: #1a1409; font-weight: 600; }
+.evt-list { font-family: var(--font-mono); font-size: 13px; color: var(--fg-2); display: flex; flex-direction: column; gap: 4px; min-height: 60px; }
+.evt-list .bad { color: var(--miss); }
+.scen-tag { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-3); }
+.cmp td.up { color: var(--hit); }
+.cmp td.down { color: var(--miss); }
+.hud-ring { position: absolute; left: 50%; top: 58%; transform: translate(-50%, 0); width: 120px; height: 120px; }
+.hud-ring .ring { width: 120px; height: 120px; }
+.hud-ring .ring .txt { font-size: 22px; }
+</style>
