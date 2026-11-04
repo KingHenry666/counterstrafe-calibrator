@@ -1,5 +1,7 @@
 # 急停标定台
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-f2b544.svg)](LICENSE)
+
 给 **ROG 魔导士 ACE HFX**（Falchion Ace HFX）磁轴键盘用户做的《无畏契约》急停测试网站。它不会替你改键盘，而是先测出你手指平时按多深、抬多高、A/D 切换时有没有重叠，再把这些习惯翻译成 Armoury Crate 里的具体数字：触发点、快速触发的下压/上抬、顶部/底部死区、DKS 各层的行程位置。
 
 全程大约 15 分钟。做完你会得到一张表，照着抄进 Armoury Crate 就行。
@@ -370,5 +372,7 @@ node tests/rules.test.js    # 对运动模型、拉扯指标、二分法、推�
 ---
 
 ## 许可证
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-f2b544.svg)](LICENSE)
 
 [MIT](LICENSE)。可以自由使用、修改和分发，保留版权声明即可。本仓库不包含 Three.js 的源码（运行时从 CDN 加载，Three.js 本身也是 MIT 许可）。
